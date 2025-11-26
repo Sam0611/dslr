@@ -1,1 +1,3 @@
 *.csv
+virtualEnv
+__pycache__
