@@ -1,10 +1,9 @@
 
 def get_count(args: any):
-    """return the number of not-empty values"""
+    """return the number of values"""
     count = 0
     for x in args:
-        if x == x:
-            count += 1
+        count += 1
     return count
 
 
