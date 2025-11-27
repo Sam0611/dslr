@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 
 from statistics import get_count, get_mean, get_standard_deviation
 from statistics import get_median, get_first_quartile, get_third_quartile
@@ -25,7 +26,10 @@ def get_not_empty_values(args: any):
 
 def main():
     try:
-        data = load("dataset_train.csv")
+        if len(sys.argv) != 2:
+            raise Exception("One argument is required : the path to csv file")
+
+        data = load(sys.argv[1])
         numerical_data = data.select_dtypes(include=['number'])
 
         data_dict = {}
@@ -46,7 +50,6 @@ def main():
         df = pd.DataFrame(data_dict, index=labels)
 
         print(data.describe())
-
         print(df)
 
     except Exception as error:

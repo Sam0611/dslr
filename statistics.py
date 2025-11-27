@@ -21,7 +21,7 @@ def get_variance(args: any):
     numbers = []
     for x in args:
         numbers.append((x - mean) ** 2)
-    return get_mean(numbers)
+    return sum(numbers) / (len(numbers) - 1)
 
 
 def get_standard_deviation(args: any):
