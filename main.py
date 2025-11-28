@@ -35,6 +35,8 @@ def main():
         data_dict = {}
         for name in numerical_data.columns:
             col = get_not_empty_values(data[name])
+            if len(col) == 0:
+                continue
             data_dict[name] = [
                 get_count(col),
                 get_mean(col),
@@ -51,6 +53,12 @@ def main():
 
         print(data.describe())
         print(df)
+
+        # values = [5,10,20,30,40,50,55,60,70,80,88,89]
+        # values = [1,2,3,4,5,6,7,8]
+        # datatest = pd.DataFrame(values)
+        # print(datatest.quantile(0.25))
+        # print(get_first_quartile(values))
 
     except Exception as error:
         print("Error:", error)
