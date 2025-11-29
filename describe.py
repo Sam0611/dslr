@@ -3,7 +3,7 @@ import sys
 
 from statistics import get_count, get_mean, get_standard_deviation
 from statistics import get_median, get_first_quartile, get_third_quartile
-from statistics import get_min, get_max
+from statistics import get_min, get_max, get_modes
 
 
 def load(path: str) -> pd.core.frame.DataFrame:
@@ -45,20 +45,16 @@ def main():
                 get_first_quartile(col),
                 get_median(col),
                 get_third_quartile(col),
-                get_max(col)
+                get_max(col),
+                get_max(col) - get_min(col),
+                len(get_modes(col))
             ]
 
-        labels = ["count", "mean", "std", "min", "25%", "50%", "75%", "max"]
+        labels = ["count", "mean", "std", "min", "25%", "50%", "75%", "max", "spread", "number of modes"]
         df = pd.DataFrame(data_dict, index=labels)
 
         print(data.describe())
         print(df)
-
-        # values = [5,10,20,30,40,50,55,60,70,80,88,89]
-        # values = [1,2,3,4,5,6,7,8]
-        # datatest = pd.DataFrame(values)
-        # print(datatest.quantile(0.25))
-        # print(get_first_quartile(values))
 
     except Exception as error:
         print("Error:", error)
