@@ -37,20 +37,23 @@ def main():
             col = get_not_empty_values(data[name])
             if len(col) == 0:
                 continue
+            q1 = get_first_quartile(col)
+            q3 = get_third_quartile(col)
             data_dict[name] = [
                 get_count(col),
                 get_mean(col),
                 get_standard_deviation(col),
                 get_min(col),
-                get_first_quartile(col),
+                q1,
                 get_median(col),
-                get_third_quartile(col),
+                q3,
                 get_max(col),
                 get_max(col) - get_min(col),
-                len(get_modes(col))
+                len(get_modes(col)),
+                q3 - q1
             ]
 
-        labels = ["count", "mean", "std", "min", "25%", "50%", "75%", "max", "spread", "number of modes"]
+        labels = ["count", "mean", "std", "min", "25%", "50%", "75%", "max", "spread", "n modes", "IQR"]
         df = pd.DataFrame(data_dict, index=labels)
 
         print(data.describe())
