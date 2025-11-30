@@ -24,40 +24,50 @@ def get_not_empty_values(args: any):
     return values
 
 
+def describe_data(args: pd.DataFrame):
+    """returns a pandas dataframe describing statistical characteristics"""
+    numerical_data = args.select_dtypes(include=['number'])
+
+    data_dict = {}
+    for name in numerical_data.columns:
+        col = get_not_empty_values(args[name])
+        if len(col) == 0:
+            continue
+        q1 = get_first_quartile(col)
+        q3 = get_third_quartile(col)
+        data_dict[name] = [
+            get_count(col),
+            get_mean(col),
+            get_standard_deviation(col),
+            get_min(col),
+            q1,
+            get_median(col),
+            q3,
+            get_max(col),
+            get_max(col) - get_min(col),
+            len(get_modes(col)),
+            q3 - q1
+        ]
+
+    labels = [
+        "count", "mean", "std", "min",
+        "25%", "50%", "75%", "max",
+        "spread", "n modes", "IQR"
+    ]
+    df = pd.DataFrame(data_dict, index=labels)
+
+    return df
+
+
 def main():
     try:
         if len(sys.argv) != 2:
             raise Exception("One argument is required : the path to csv file")
 
         data = load(sys.argv[1])
-        numerical_data = data.select_dtypes(include=['number'])
-
-        data_dict = {}
-        for name in numerical_data.columns:
-            col = get_not_empty_values(data[name])
-            if len(col) == 0:
-                continue
-            q1 = get_first_quartile(col)
-            q3 = get_third_quartile(col)
-            data_dict[name] = [
-                get_count(col),
-                get_mean(col),
-                get_standard_deviation(col),
-                get_min(col),
-                q1,
-                get_median(col),
-                q3,
-                get_max(col),
-                get_max(col) - get_min(col),
-                len(get_modes(col)),
-                q3 - q1
-            ]
-
-        labels = ["count", "mean", "std", "min", "25%", "50%", "75%", "max", "spread", "n modes", "IQR"]
-        df = pd.DataFrame(data_dict, index=labels)
 
         print(data.describe())
-        print(df)
+        print(describe_data(data))
 
     except Exception as error:
         print("Error:", error)
