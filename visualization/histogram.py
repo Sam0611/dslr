@@ -13,6 +13,7 @@ def main():
         data = pd.read_csv(sys.argv[1])
         numerical_data = data.select_dtypes(include=['number'])
         numerical_data = numerical_data.drop("Index", axis='columns')
+        numerical_data = numerical_data.drop("Hogwarts House", axis='columns')
 
         fig, axes = plt.subplots(nrows=3, ncols=5, figsize=(12, 4))
 

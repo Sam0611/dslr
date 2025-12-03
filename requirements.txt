@@ -1,6 +1,7 @@
 contourpy==1.3.2
 cycler==0.12.1
 fonttools==4.61.0
+ft_package @ file:///tmp/luis/ex09/ft_package.tar.gz#sha256=d6486ffdecce62b623db19b4af6b82f5d0a3a140042ddbcb5a4b2e4d34702b13
 kiwisolver==1.4.9
 matplotlib==3.10.7
 numpy==2.2.6
@@ -8,7 +9,11 @@ packaging==25.0
 pandas==2.3.3
 pillow==12.0.0
 pyparsing==3.2.5
+PyQt6==6.10.0
+PyQt6-Qt6==6.10.1
+PyQt6_sip==13.10.2
 python-dateutil==2.9.0.post0
 pytz==2025.2
 six==1.17.0
+tqdm==4.67.1
 tzdata==2025.2
