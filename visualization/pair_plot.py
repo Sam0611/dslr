@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-
 def get_not_empty_values(args: any):
     """returns every not empty values"""
     values = []
@@ -22,35 +21,31 @@ def pair_plot():
 
         numerical_data = data.select_dtypes(include=['number'])
         numerical_data = numerical_data.drop("Index", axis='columns')
-        numerical_data = numerical_data.drop("Hogwarts House", axis='columns')
+        if "Hogwarts House" in numerical_data.columns:
+            numerical_data = numerical_data.drop("Hogwarts House", axis='columns')
 
-        graph_nbrs = 144
-        graph_cols = 12
-        fig, axes = plt.subplots(nrows=12, ncols=12, figsize=(graph_nbrs, graph_cols))
-        print("tewst") 
+        num_features = len(numerical_data.columns)
 
-        i = 0
-        j = 0
-        for name in numerical_data.columns:
-            axes[j, i].hist(numerical_data[name], bins=30, color='Yellow', edgecolor='black')
-            axes[j, i].set_title(name)
-            i = i + 1
-            if (i >= graph_cols):
-                j = j + 1
-                i = 0
+        fig, axes = plt.subplots(nrows=num_features, ncols=num_features, figsize=(10, 10))
 
-        axes[j, i].hist()
+        for i in range(num_features):
+            for j in range(num_features):
+                name1 = numerical_data.columns[i]
+                name2 = numerical_data.columns[j]
+                if i == j:
+                    axes[i, j].hist(numerical_data[name1], bins=15, color='Yellow', edgecolor='black')
+                else:
+                    axes[i, j].scatter(numerical_data[name1], numerical_data[name2], color='blue')
 
-        plt.show()
+                if j == 0:
+                    axes[i, j].set_ylabel(name1)
+                if i == num_features - 1:
+                    axes[i, j].set_xlabel(name2, fontsize=10)
 
-        # for x in numerical_data:
-        #     col = numerical_data[x]
-        #     plt.pair(col, newAges)
-        #     plt.show()
+                axes[i, j].set_xticks([])
+                axes[i, j].set_yticks([])
 
-
-
-        plt.scatter(col1, col2)
+        plt.tight_layout()
         plt.show()
 
     except Exception as error:
