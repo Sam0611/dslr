@@ -1,9 +1,18 @@
+import sys
+sys.path.append("../")
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import sys
-import statistics
+from analysis import statistics
 
+def get_not_empty_values(args: any):
+    """returns every not empty values"""
+    values = []
+    for data in args:
+        if data == data:
+            values.append(data)
+    return values
 
 def main():
     try:
@@ -26,6 +35,16 @@ def main():
             if (i >= 5):
                 j = j + 1
                 i = 0
+
+        # add histogram of variance
+        std = []
+        for name in numerical_data.columns:
+            col = get_not_empty_values(numerical_data[name])
+            std.append(statistics.get_standard_deviation(col))
+        # print(std)
+        plt.hist(std)
+
+        # axes[j, i].hist()
 
         plt.show()
 

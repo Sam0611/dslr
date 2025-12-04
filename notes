@@ -1,3 +1,7 @@
+- plot des histogram std
+- norme
 
 - changer try except deja present ?
-- norme
+- supprimer le describe de pandas
+- importer get_not_empty_values
+- changer la facon d'importer ?
