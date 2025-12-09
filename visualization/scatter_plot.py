@@ -1,4 +1,5 @@
 import sys
+import math
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -12,26 +13,77 @@ def get_not_empty_values(args: any):
     return values
 
 
+def get_label(str, length):
+    if len(str) <= length:
+        return str
+
+    label = str[:length].rsplit(" ", 1)
+    label = '\n'.join(label) + get_label(str[length:], length)
+    return label
+
+
+def press(event):
+    if event.key == "escape":
+        plt.close()
+
+
 def scatter_plot():
     try:
         if len(sys.argv) != 2:
             raise Exception("One argument is required : the path to csv file")
         data = pd.read_csv(sys.argv[1])
-        numerical_data = data.select_dtypes(include=['number'])
-        numerical_data = numerical_data.drop("Index", axis='columns')
-        numerical_data = numerical_data.drop("Hogwarts House", axis='columns')
+        num_data = data.select_dtypes(include=['number'])
+        num_data = num_data.drop("Index", axis='columns')
+        if "Hogwarts House" in num_data.columns:
+            num_data = num_data.drop("Hogwarts House", axis='columns')
 
-        col1 = numerical_data['Arithmancy']
-        col2 = data['Astronomy']
+        num_features = len(num_data.columns)
 
-        # for x in numerical_data:
-        #     col = numerical_data[x]
-        #     plt.scatter(col, newAges)
-        #     plt.show()
+        n_plots = 0
+        for i in range(num_features):
+            n_plots = n_plots + i
 
+        nrows = round(n_plots ** 0.5)
+        ncols = math.ceil(n_plots ** 0.5)
 
+        fig, axes = plt.subplots(
+            nrows=nrows,
+            ncols=ncols,
+            figsize=(10, 10)
+        )
 
-        plt.scatter(col1, col2)
+        row = 0
+        col = 0
+        for i in range(num_features - 1):
+            for j in range(i + 1, num_features):
+                if col >= ncols:
+                    col = 0
+                    row = row + 1
+                name1 = num_data.columns[i]
+                name2 = num_data.columns[j]
+
+                axes[row, col].scatter(
+                    num_data[name1],
+                    num_data[name2],
+                    color='orange',
+                    s=1
+                )
+
+                axes[row, col].set_ylabel(get_label(name1, 10), fontsize=8)
+                axes[row, col].set_xlabel(get_label(name2, 15), fontsize=8)
+
+                axes[row, col].set_xticks([])
+                axes[row, col].set_yticks([])
+
+                col = col + 1
+
+        for i in range(nrows * ncols - n_plots):
+            axes[row, col + i].set_visible(False)
+
+        plt.tight_layout()
+        manager = plt.get_current_fig_manager()
+        manager.full_screen_toggle()
+        _ = fig.canvas.mpl_connect('key_press_event', press)
         plt.show()
 
     except Exception as error:
