@@ -31,12 +31,15 @@ def scatter_plot():
     try:
         if len(sys.argv) != 2:
             raise Exception("One argument is required : the path to csv file")
+        
         data = pd.read_csv(sys.argv[1])
         num_data = data.select_dtypes(include=['number'])
         num_data = num_data.drop("Index", axis='columns')
         if "Hogwarts House" in num_data.columns:
             num_data = num_data.drop("Hogwarts House", axis='columns')
 
+        hogwarts_houses = data["Hogwarts House"].unique()
+        colors = ['blue', 'green', 'red', 'yellow', 'orange']
         num_features = len(num_data.columns)
 
         n_plots = 0
@@ -62,12 +65,21 @@ def scatter_plot():
                 name1 = num_data.columns[i]
                 name2 = num_data.columns[j]
 
-                axes[row, col].scatter(
-                    num_data[name1],
-                    num_data[name2],
-                    color='orange',
-                    s=1
-                )
+                c = 0
+                for house in hogwarts_houses:
+                    if len(hogwarts_houses) <= 1:
+                        c = 4
+                        tmp_data = num_data
+                    else:
+                        tmp_data = num_data[data['Hogwarts House'].isin([house])]
+
+                    axes[row, col].scatter(
+                        tmp_data[name1],
+                        tmp_data[name2],
+                        color=colors[c],
+                        s=1
+                    )
+                    c = c + 1
 
                 axes[row, col].set_ylabel(get_label(name1, 10), fontsize=8)
                 axes[row, col].set_xlabel(get_label(name2, 15), fontsize=8)
