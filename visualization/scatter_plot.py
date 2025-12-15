@@ -76,6 +76,35 @@ def scatter_plot():
     plt.tight_layout()
     plt.show()
 
+    draw_scatter_plot(data, houses_names, colors)
+
+
+def draw_scatter_plot(data, houses_names, colors):
+    """draw scatter plot between the 2 si;ilar features and save it as png"""
+    name1 = 'Astronomy'
+    name2 = 'Defense Against the Dark Arts'
+
+    c = 0
+    for house in houses_names:
+        if len(houses_names) <= 1:  # Hogwarts House = nan
+            c = 4
+            tmp_data = data
+        else:
+            tmp_data = data[data['Hogwarts House'].isin([house])]
+
+        plt.scatter(
+            tmp_data[name1],
+            tmp_data[name2],
+            color=colors[c],
+            alpha=0.6
+        )
+        c = c + 1
+
+    plt.xlabel(name1)
+    plt.ylabel(name2)
+
+    plt.savefig('scatter.png')
+
 
 def main():
     try:
