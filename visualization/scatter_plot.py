@@ -3,107 +3,84 @@ import math
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from utils import get_not_empty_values, get_label, press, get_numerical_data, init_subplots
 
-def get_not_empty_values(args: any):
-    """returns every not empty values"""
-    values = []
-    for data in args:
-        if data == data:
-            values.append(data)
-    return values
+def get_subplots_params(num_features):
 
+    # calculate number of graph
+    n_plots = 0
+    for i in range(num_features):
+        n_plots = n_plots + i
 
-def get_label(str, length):
-    if len(str) <= length:
-        return str
+    # calculate number of rows and columns
+    nrows = round(n_plots ** 0.5)
+    ncols = math.ceil(n_plots ** 0.5)
 
-    label = str[:length].rsplit(" ", 1)
-    label = '\n'.join(label) + get_label(str[length:], length)
-    return label
-
-
-def press(event):
-    if event.key == "escape":
-        plt.close()
+    return n_plots, nrows, ncols
 
 
 def scatter_plot():
-    try:
-        if len(sys.argv) != 2:
-            raise Exception("One argument is required : the path to csv file")
-        
-        data = pd.read_csv(sys.argv[1])
-        num_data = data.select_dtypes(include=['number'])
-        num_data = num_data.drop("Index", axis='columns')
-        if "Hogwarts House" in num_data.columns:
-            num_data = num_data.drop("Hogwarts House", axis='columns')
+    if len(sys.argv) != 2:
+        raise Exception("One argument is required : the path to csv file")
+    
+    # get data from csv file
+    data = pd.read_csv(sys.argv[1])
+    num_data = get_numerical_data(data)
 
-        hogwarts_houses = data["Hogwarts House"].unique()
-        colors = ['blue', 'green', 'red', 'yellow', 'orange']
-        num_features = len(num_data.columns)
+    # init variables
+    houses_names = data["Hogwarts House"].unique()
+    colors = ['blue', 'green', 'red', 'yellow', 'orange']
+    num_features = len(num_data.columns)
+    n_plots, nrows, ncols = get_subplots_params(num_features)
 
-        n_plots = 0
-        for i in range(num_features):
-            n_plots = n_plots + i
+    # init subplots
+    axes = init_subplots(n_plots, nrows, ncols)
 
-        nrows = round(n_plots ** 0.5)
-        ncols = math.ceil(n_plots ** 0.5)
+    row = 0
+    col = 0
+    for i in range(num_features - 1):
+        for j in range(i + 1, num_features):
+            name1 = num_data.columns[i]
+            name2 = num_data.columns[j]
 
-        fig, axes = plt.subplots(
-            nrows=nrows,
-            ncols=ncols,
-            figsize=(10, 10)
-        )
+            if col >= ncols:
+                col = 0
+                row = row + 1
 
-        row = 0
-        col = 0
-        for i in range(num_features - 1):
-            for j in range(i + 1, num_features):
-                if col >= ncols:
-                    col = 0
-                    row = row + 1
-                name1 = num_data.columns[i]
-                name2 = num_data.columns[j]
+            c = 0
+            for house in houses_names:
+                if len(houses_names) <= 1: # Hogwarts House = nan
+                    c = 4
+                    tmp_data = num_data
+                else:
+                    tmp_data = num_data[data['Hogwarts House'].isin([house])]
 
-                c = 0
-                for house in hogwarts_houses:
-                    if len(hogwarts_houses) <= 1:
-                        c = 4
-                        tmp_data = num_data
-                    else:
-                        tmp_data = num_data[data['Hogwarts House'].isin([house])]
+                axes[row, col].scatter(
+                    tmp_data[name1],
+                    tmp_data[name2],
+                    color=colors[c],
+                    alpha=0.6,
+                    s=1
+                )
+                c = c + 1
 
-                    axes[row, col].scatter(
-                        tmp_data[name1],
-                        tmp_data[name2],
-                        color=colors[c],
-                        s=1
-                    )
-                    c = c + 1
+            axes[row, col].set_ylabel(get_label(name1, 10), fontsize=8)
+            axes[row, col].set_xlabel(get_label(name2, 15), fontsize=8)
 
-                axes[row, col].set_ylabel(get_label(name1, 10), fontsize=8)
-                axes[row, col].set_xlabel(get_label(name2, 15), fontsize=8)
+            axes[row, col].set_xticks([])
+            axes[row, col].set_yticks([])
 
-                axes[row, col].set_xticks([])
-                axes[row, col].set_yticks([])
+            col = col + 1
 
-                col = col + 1
-
-        for i in range(nrows * ncols - n_plots):
-            axes[row, col + i].set_visible(False)
-
-        plt.tight_layout()
-        manager = plt.get_current_fig_manager()
-        manager.full_screen_toggle()
-        _ = fig.canvas.mpl_connect('key_press_event', press)
-        plt.show()
-
-    except Exception as error:
-        print("Error:", error)
+    plt.tight_layout()
+    plt.show()
 
 
 def main():
-    scatter_plot()
+    try:
+        scatter_plot()
+    except Exception as error:
+        print("Error:", error)
 
 
 if (__name__ == "__main__"):
