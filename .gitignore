@@ -1,3 +1,4 @@
 *.csv
 virtualEnv
 __pycache__
+*.png
