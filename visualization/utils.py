@@ -1,15 +1,6 @@
 import matplotlib.pyplot as plt
 
 
-def get_not_empty_values(args: any):
-    """returns every not empty values"""
-    values = []
-    for data in args:
-        if data == data:
-            values.append(data)
-    return values
-
-
 def get_label(str, length):
     """returns label with spaces replaced by \n if is too long"""
     if len(str) <= length:

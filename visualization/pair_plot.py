@@ -2,7 +2,7 @@ import sys
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from utils import get_not_empty_values, get_label, press, get_numerical_data, init_subplots
+from utils import get_label, get_numerical_data, init_subplots
 
 
 def pair_plot():
@@ -28,7 +28,7 @@ def pair_plot():
 
             c = 0
             for house in houses_names:
-                if len(houses_names) <= 1: # Hogwarts House = nan
+                if len(houses_names) <= 1:  # Hogwarts House = nan
                     c = 4
                     tmp_data = num_data
                 else:

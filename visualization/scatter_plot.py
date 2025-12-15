@@ -3,7 +3,8 @@ import math
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from utils import get_not_empty_values, get_label, press, get_numerical_data, init_subplots
+from utils import get_label, get_numerical_data, init_subplots
+
 
 def get_subplots_params(num_features):
 
@@ -22,7 +23,7 @@ def get_subplots_params(num_features):
 def scatter_plot():
     if len(sys.argv) != 2:
         raise Exception("One argument is required : the path to csv file")
-    
+
     # get data from csv file
     data = pd.read_csv(sys.argv[1])
     num_data = get_numerical_data(data)
@@ -49,7 +50,7 @@ def scatter_plot():
 
             c = 0
             for house in houses_names:
-                if len(houses_names) <= 1: # Hogwarts House = nan
+                if len(houses_names) <= 1:  # Hogwarts House = nan
                     c = 4
                     tmp_data = num_data
                 else:
