@@ -23,8 +23,8 @@ def pair_plot():
 
     for row in range(num_features):
         for col in range(num_features):
-            name1 = num_data.columns[row]
-            name2 = num_data.columns[col]
+            name1 = num_data.columns[col]
+            name2 = num_data.columns[row]
 
             c = 0
             for house in houses_names:
@@ -51,10 +51,10 @@ def pair_plot():
                     )
                 c = c + 1
 
-            if col == 0:
-                axes[row, col].set_ylabel(get_label(name1, 10), fontsize=8)
             if row == num_features - 1:
-                axes[row, col].set_xlabel(get_label(name2, 15), fontsize=8)
+                axes[row, col].set_xlabel(get_label(name1, 15), fontsize=8)
+            if col == 0:
+                axes[row, col].set_ylabel(get_label(name2, 10), fontsize=8)
 
             axes[row, col].set_xticks([])
             axes[row, col].set_yticks([])

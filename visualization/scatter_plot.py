@@ -65,8 +65,8 @@ def scatter_plot():
                 )
                 c = c + 1
 
-            axes[row, col].set_ylabel(get_label(name1, 10), fontsize=8)
-            axes[row, col].set_xlabel(get_label(name2, 15), fontsize=8)
+            axes[row, col].set_xlabel(get_label(name1, 15), fontsize=8)
+            axes[row, col].set_ylabel(get_label(name2, 10), fontsize=8)
 
             axes[row, col].set_xticks([])
             axes[row, col].set_yticks([])
