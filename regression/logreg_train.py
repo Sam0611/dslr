@@ -30,41 +30,117 @@ def logreg_train():
     # replace nan values with the mean for same house
     replace_nan_values(data, num_data)
 
-    # init variables
-    n_rows = len(data['Index'])
-    n_cols = len(num_data.columns) + 1
-    weights = np.zeros(n_cols)
-    p = np.array([])
+    # normalize data with Z-Score method
+    for col in num_data.columns:
+        num_data[col] = num_data[col] - num_data[col].mean()
+        num_data[col] = num_data[col] / num_data[col].std()
 
     # add column of one
-    num_data.insert(0, 'x0', np.ones(n_rows))
+    num_data.insert(0, 'x0', np.ones(len(num_data)))
 
-    # y = 0|1
-    y = np.where(data['Hogwarts House'] == 'Gryffindor', 1, 0)
+    # get houses name
+    houses = data["Hogwarts House"].unique()
 
-    # z = w0 + x1*w1 + xn*wn
+    # set colors for each house ['blue', 'green', 'red', 'yellow']
+    colors = [96, 92, 91, 93]
+
+    f = open('weights.txt', 'w')
+    for i in range(len(houses)):
+        # y = 1 if house, 0 if not
+        y = np.where(data['Hogwarts House'] == houses[i], 1, 0)
+
+        print(f"\033[{colors[i]};1m{houses[i]}")
+
+        # init weights at 0
+        weights = np.zeros(len(num_data.columns))
+
+        # init probabilities
+        p = get_probabilities(num_data, weights)
+
+        loss = 1
+        count = 0
+        while loss > 0.1:
+
+            # update weights
+            gradient_descent(num_data, weights, p, y)
+
+            # get probability for each row
+            p = get_probabilities(num_data, weights)
+
+            # calculates how far from true probabilities
+            loss = get_loss_value(y, p)
+
+            print(loss, end="\r")
+            count = count + 1
+
+        print_results(data, p, count, loss, houses[i])
+
+        print('\033[00;1m------------------------------------\033[00m')
+
+        # write weight values in file
+        f.write(f"{houses[i]}\n")
+        for w in weights:
+            f.write(f"{w}\n")
+
+
+def print_results(data, p, count, loss, house):
+    fp = 0
+    fn = 0
+    for i in range(len(p)):
+        if p[i] > 0.5 and data.loc[i, 'Hogwarts House'] != house:
+            fp = fp + 1
+        if p[i] < 0.5 and data.loc[i, 'Hogwarts House'] == house:
+            fn = fn + 1
+
+    print('Number of iterations :', count)
+    print('Loss value :', loss)
+    print('Number of false positive :', fp)
+    print('Number of false negative :', fn)
+    print('Total of false predictions :', fp + fn)
+
+
+def get_probabilities(num_data, weights):
+    """
+        Calculates the probability for each row
+        p = 1 / (1 + e(-z))
+        z = w0 + x1*w1 + xn*wn
+    """
+    n_rows = len(num_data)
+    p = np.array([])
     for i in range(n_rows):
         row = np.array(num_data.loc[i])
         z = 0
         for j in range(len(row)):
             z = z + weights[j] * row[j]
-
-        # p = 1 / (1 + e(-z))
         p = np.append(p, 1 / (1 + math.exp(-z)))
+    return p
 
-    # gradient_descent = 1/n * X'(p - y)
+
+def gradient_descent(num_data, weights, p, y):
+    """
+        Update the weights using gradient descent
+        w = w - 0.1 * gd
+        gd = mean(x[i] * (p[i] - y[i]))
+    """
+    n_cols = len(num_data.columns)
+    n_rows = len(num_data)
     for col in range(n_cols):
         gd = 0
         x = np.array(num_data[num_data.columns[col]])
         for row in range(n_rows):
             gd = gd + x[row] * (p[row] - y[row])
         gd = gd / n_rows
-
-        # w = w - 0.1 * gd
         weights[col] = weights[col] - 0.1 * gd
 
-    # loss fct L = -1/n * ( y*log(p) + (1 - y)*log(1 - p) )
-    L = -1 / n_rows * (y[0] * math.log(p[0]) + (1 - y[0]) * math.log(1 - p[0]))
+
+def get_loss_value(y, p):
+    """returns the mean of y*log(p) + (1 - y)*log(1 - p)"""
+    loss = 0
+    n = len(y)
+    for i in range(n):
+        loss = loss + (y[i] * math.log(p[i]) + (1 - y[i]) * math.log(1 - p[i]))
+    loss = loss / -n
+    return loss
 
 
 def main():
