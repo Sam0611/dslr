@@ -2,3 +2,4 @@
 virtualEnv
 __pycache__
 *.png
+*.txt
