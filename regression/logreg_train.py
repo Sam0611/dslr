@@ -81,6 +81,7 @@ def logreg_train():
         f.write(f"{houses[i]}\n")
         for w in weights:
             f.write(f"{w}\n")
+    f.close()
 
 
 def print_results(data, p, count, loss, house):
