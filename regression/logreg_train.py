@@ -3,6 +3,8 @@ import math
 import pandas as pd
 import numpy as np
 
+from utils import get_probabilities
+
 
 def replace_nan_values(data, num_data):
     for col in num_data.columns:
@@ -98,23 +100,6 @@ def print_results(data, p, count, loss, house):
     print('Number of false positive :', fp)
     print('Number of false negative :', fn)
     print('Total of false predictions :', fp + fn)
-
-
-def get_probabilities(num_data, weights):
-    """
-        Calculates the probability for each row
-        p = 1 / (1 + e(-z))
-        z = w0 + x1*w1 + xn*wn
-    """
-    n_rows = len(num_data)
-    p = np.array([])
-    for i in range(n_rows):
-        row = np.array(num_data.loc[i])
-        z = 0
-        for j in range(len(row)):
-            z = z + weights[j] * row[j]
-        p = np.append(p, 1 / (1 + math.exp(-z)))
-    return p
 
 
 def gradient_descent(num_data, weights, p, y):
