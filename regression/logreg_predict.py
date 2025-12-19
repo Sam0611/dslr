@@ -1,5 +1,8 @@
 import sys
 import pandas as pd
+import numpy as np
+
+from utils import get_probabilities
 
 
 def logreg_predict():
@@ -9,10 +12,61 @@ def logreg_predict():
         generates a prediction file 'houses.csv'
     """
     if len(sys.argv) != 3:
-        raise Exception("Two arguments are required : the path to csv file and file containing the weights")
+        raise Exception(
+            "Two arguments are required : "
+            "the path to csv file and file containing the weights"
+        )
 
     # get data from csv file
     data = pd.read_csv(sys.argv[1])
+    num_data = data.select_dtypes(include=['number'])
+    num_data = num_data.drop("Index", axis='columns')
+    if "Hogwarts House" in num_data.columns:
+        num_data = num_data.drop("Hogwarts House", axis='columns')
+
+    # replace nan values with the mean
+    for col in num_data.columns:
+        num_data.fillna({col: num_data[col].mean()}, inplace=True)
+
+    # normalize data with Z-Score method
+    for col in num_data.columns:
+        num_data[col] = num_data[col] - num_data[col].mean()
+        num_data[col] = num_data[col] / num_data[col].std()
+
+    # add column of one
+    num_data.insert(0, 'x0', np.ones(len(num_data)))
+
+    # read file containing weights and calculate probabilities
+    p = get_proba_from_file(sys.argv[2], num_data)
+
+    # write prediction file
+    f = open('houses.csv', 'w')
+    f.write("Index,Hogwarts House\n")
+    for row in range(len(p)):
+        house = p.columns[0]
+        for col in p.columns:
+            if p.loc[row, col] > p.loc[row, house]:
+                house = col
+        f.write(f"{row},{house}\n")
+    f.close()
+
+
+def get_proba_from_file(filename, data):
+    p = {}
+    values = []
+    label = ''
+    with open(filename) as f:
+        for line in f:
+            line = line.rstrip()
+            if line.isalpha():
+                if len(label) > 0:
+                    p[label] = get_probabilities(data, values)
+                    values.clear()
+                label = line
+            else:
+                values.append(float(line))
+    p[label] = get_probabilities(data, values)
+    return pd.DataFrame(p)
 
 
 def main():
