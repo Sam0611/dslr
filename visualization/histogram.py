@@ -9,12 +9,9 @@ from utils import get_numerical_data, init_subplots
 # from analysis import statistics
 
 
-def histogram():
-    if len(sys.argv) != 2:
-        raise Exception("One argument is required : the path to csv file")
+def histogram(data):
+    """Display numerical data as histogram"""
 
-    # get data from csv file
-    data = pd.read_csv(sys.argv[1])
     num_data = get_numerical_data(data)
 
     # init variables
@@ -67,7 +64,10 @@ def histogram():
 
 def main():
     try:
-        histogram()
+        data = pd.read_csv(sys.argv[1])
+        histogram(data)
+    except IndexError:
+        print('One argument is required : the path to csv file')
     except Exception as error:
         print("Error:", error)
 

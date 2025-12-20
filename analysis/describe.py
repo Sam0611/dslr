@@ -6,15 +6,6 @@ from statistics import get_median, get_first_quartile, get_third_quartile
 from statistics import get_min, get_max, get_modes
 
 
-def load(path: str) -> pd.core.frame.DataFrame:
-    """Loads csv file and returns its data"""
-    try:
-        data = pd.read_csv(path)
-        return data
-    except Exception:
-        return None
-
-
 def get_not_empty_values(args: any):
     """returns every not empty values"""
     values = []
@@ -61,14 +52,12 @@ def describe_data(args: pd.DataFrame):
 
 def main():
     try:
-        if len(sys.argv) != 2:
-            raise Exception("One argument is required : the path to csv file")
+        data = pd.read_csv(sys.argv[1])
 
-        data = load(sys.argv[1])
-
-        print(data.describe())
+        # print(data.describe())
         print(describe_data(data))
-
+    except IndexError:
+        print('One argument is required : the path to csv file')
     except Exception as error:
         print("Error:", error)
 

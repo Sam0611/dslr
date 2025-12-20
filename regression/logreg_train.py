@@ -7,6 +7,10 @@ from utils import get_probabilities
 
 
 def replace_nan_values(data, num_data):
+    """
+        Replaces nan values of num_data
+        with the mean of the corresponding house
+    """
     for col in num_data.columns:
         for i in range(len(num_data[col])):
             if math.isnan(num_data[col].loc[i]):
@@ -15,21 +19,17 @@ def replace_nan_values(data, num_data):
                 num_data.loc[i, col] = tmp_data[col].mean()
 
 
-def logreg_train():
+def logreg_train(data):
     """
         takes dataset_train.csv as a parameter
         generates a file containing the weights
         that will be used for the prediction
     """
-    if len(sys.argv) != 2:
-        raise Exception("One argument is required : the path to csv file")
 
-    # get data from csv file
-    data = pd.read_csv(sys.argv[1])
+    # get numerical data only
     num_data = data.select_dtypes(include=['number'])
     num_data = num_data.drop("Index", axis='columns')
 
-    # replace nan values with the mean for same house
     replace_nan_values(data, num_data)
 
     # normalize data with Z-Score method
@@ -43,12 +43,13 @@ def logreg_train():
     # get houses name
     houses = data["Hogwarts House"].unique()
 
-    # set colors for each house ['blue', 'green', 'red', 'yellow']
+    # set colors for each house
+    # colors = ['blue', 'green', 'red', 'yellow']
     colors = [96, 92, 91, 93]
 
     f = open('weights.txt', 'w')
     for i in range(len(houses)):
-        # y = 1 if house, 0 if not
+        # y = 1 if is the right house, 0 if not
         y = np.where(data['Hogwarts House'] == houses[i], 1, 0)
 
         print(f"\033[{colors[i]};1m{houses[i]}")
@@ -87,6 +88,7 @@ def logreg_train():
 
 
 def print_results(data, p, count, loss, house):
+    """Displays number of iterations and errors"""
     fp = 0
     fn = 0
     for i in range(len(p)):
@@ -131,7 +133,10 @@ def get_loss_value(y, p):
 
 def main():
     try:
-        logreg_train()
+        data = pd.read_csv(sys.argv[1])
+        logreg_train(data)
+    except IndexError:
+        print('One argument is required : the path to csv file')
     except Exception as error:
         print("Error:", error)
 

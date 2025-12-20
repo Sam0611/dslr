@@ -5,12 +5,9 @@ import pandas as pd
 from utils import get_label, get_numerical_data, init_subplots
 
 
-def pair_plot():
-    if len(sys.argv) != 2:
-        raise Exception("One argument is required : the path to csv file")
+def pair_plot(data):
+    """Display numerical data as pair plot"""
 
-    # get data from csv file
-    data = pd.read_csv(sys.argv[1])
     num_data = get_numerical_data(data)
 
     # init variables
@@ -65,7 +62,10 @@ def pair_plot():
 
 def main():
     try:
-        pair_plot()
+        data = pd.read_csv(sys.argv[1])
+        pair_plot(data)
+    except IndexError:
+        print('One argument is required : the path to csv file')
     except Exception as error:
         print("Error:", error)
 

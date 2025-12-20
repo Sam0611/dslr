@@ -12,6 +12,7 @@ def get_label(str, length):
 
 
 def press(event):
+    """Close matplotlib plot when Escape key is pressed"""
     if event.key == "escape":
         plt.close()
 
@@ -27,14 +28,20 @@ def get_numerical_data(data):
 
 
 def init_subplots(n_plots, nrows, ncols):
-
+    """
+        Creates a subplot with parameters passed as arguments
+        Doesn't display empty diagrams
+        Displays in fullscreen size
+        Links to Escape key
+        Returns the axes
+    """
     fig, axes = plt.subplots(
         nrows=nrows,
         ncols=ncols,
         figsize=(10, 10)
     )
 
-    # make invisible the last plots that are empty
+    # make invisible the last diagrams that are empty
     for i in range(nrows * ncols - n_plots):
         axes[nrows - 1, ncols - 1 - i].set_visible(False)
 

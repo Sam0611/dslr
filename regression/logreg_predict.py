@@ -5,20 +5,14 @@ import numpy as np
 from utils import get_probabilities
 
 
-def logreg_predict():
+def logreg_predict(data, weight_file):
     """
-        takes dataset_test.csv as a parameter
-        and a file containing the weights
+        takes a dataset as first parameter
+        and the name of the file containing the weights
         generates a prediction file 'houses.csv'
     """
-    if len(sys.argv) != 3:
-        raise Exception(
-            "Two arguments are required : "
-            "the path to csv file and file containing the weights"
-        )
 
-    # get data from csv file
-    data = pd.read_csv(sys.argv[1])
+    # get numerical data only
     num_data = data.select_dtypes(include=['number'])
     num_data = num_data.drop("Index", axis='columns')
     if "Hogwarts House" in num_data.columns:
@@ -37,7 +31,7 @@ def logreg_predict():
     num_data.insert(0, 'x0', np.ones(len(num_data)))
 
     # read file containing weights and calculate probabilities
-    p = get_proba_from_file(sys.argv[2], num_data)
+    p = get_proba_from_file(weight_file, num_data)
 
     # write prediction file
     f = open('houses.csv', 'w')
@@ -52,6 +46,12 @@ def logreg_predict():
 
 
 def get_proba_from_file(filename, data):
+    """
+        Read file passed as first argument
+        and get every weight values for each house
+        Returns probabilies for each student to belong to each house
+        using weight values
+    """
     p = {}
     values = []
     label = ''
@@ -71,7 +71,13 @@ def get_proba_from_file(filename, data):
 
 def main():
     try:
-        logreg_predict()
+        data = pd.read_csv(sys.argv[1])
+        logreg_predict(data, sys.argv[2])
+    except IndexError:
+        print(
+            "Two arguments are required : "
+            "the path to csv file and file containing the weights"
+        )
     except Exception as error:
         print("Error:", error)
 

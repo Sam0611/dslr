@@ -7,6 +7,11 @@ from utils import get_label, get_numerical_data, init_subplots
 
 
 def get_subplots_params(num_features):
+    """
+        Calculates the number of diagrams
+        and the number of rows and columns needed by sublot
+        Returns the 3 values
+    """
 
     # calculate number of graph
     n_plots = 0
@@ -20,12 +25,10 @@ def get_subplots_params(num_features):
     return n_plots, nrows, ncols
 
 
-def scatter_plot():
-    if len(sys.argv) != 2:
-        raise Exception("One argument is required : the path to csv file")
+def scatter_plot(data):
+    """Display numerical data as scatter plot"""
 
     # get data from csv file
-    data = pd.read_csv(sys.argv[1])
     num_data = get_numerical_data(data)
 
     # init variables
@@ -80,7 +83,11 @@ def scatter_plot():
 
 
 def draw_scatter_plot(data, houses_names, colors):
-    """draw scatter plot between the 2 si;ilar features and save it as png"""
+    """
+        draw scatter plot between the 2 similar features
+        and save it as scatter.png file
+    """
+
     name1 = 'Astronomy'
     name2 = 'Defense Against the Dark Arts'
 
@@ -108,7 +115,10 @@ def draw_scatter_plot(data, houses_names, colors):
 
 def main():
     try:
-        scatter_plot()
+        data = pd.read_csv(sys.argv[1])
+        scatter_plot(data)
+    except IndexError:
+        print('One argument is required : the path to csv file')
     except Exception as error:
         print("Error:", error)
 
