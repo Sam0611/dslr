@@ -25,12 +25,12 @@ def analyse_results(data, predictions):
 
 def main():
     try:
-        data = pd.read_csv("dataset_train.csv")
+        data = pd.read_csv("ressources/dataset_train.csv")
         predictions = pd.read_csv("houses.csv")
         analyse_results(data, predictions)
     except Exception as error:
         print("Error:", error)
 
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     main()

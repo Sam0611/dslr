@@ -141,5 +141,5 @@ def main():
         print("Error:", error)
 
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     main()
