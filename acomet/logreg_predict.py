@@ -5,7 +5,6 @@ import logreg_train
 import data_parsing
 
 
-
 def predict_proba(X, theta):
     X_b = np.c_[np.ones((X.shape[0], 1)), X]
     return logreg_train.sigmoid(X_b @ theta)
@@ -20,11 +19,9 @@ def logreg_predict(data_csv, weights_csv, parsing_method=data_parsing.replace_na
     hogwarts_house_dict = ["Gryffindor", "Slytherin", "Hufflepuff", "Ravenclaw"]
     houses = pd.DataFrame(columns=['Hogwarts House'])
 
-
     probas = [x for x in range(len(hogwarts_house_dict))]
     for i in range(len(hogwarts_house_dict)):
         probas[i] = predict_proba(my_data, thetas[hogwarts_house_dict[i]])
-        # probas[i] = predict_proba(my_data, thetas[i])
 
     predics = np.empty((results.shape), dtype=type(results))
     for j in range(len(my_data)):
@@ -36,7 +33,7 @@ def logreg_predict(data_csv, weights_csv, parsing_method=data_parsing.replace_na
                 index = i
         predics[j] = hogwarts_house_dict[index]
         houses.loc[j] = hogwarts_house_dict[index]
-    
+
     houses.index.name = 'Index'
     houses.to_csv('houses.csv', index=True)
 
@@ -58,7 +55,7 @@ def logreg_predict_parse_args():
     func_dic = {'replace_nan_value': data_parsing.replace_nan_value, 'pandas_remove_nan_line': data_parsing.pandas_remove_nan_line, 'replace_nan_value_by_0': data_parsing.replace_nan_value_by_0}
     args_dic['parse_method'] = func_dic[args_dic['parse_method']]
 
-    return(args_dic)
+    return args_dic
 
 
 def main():
@@ -72,7 +69,7 @@ def main():
         args = logreg_predict_parse_args()
         if (not args):
             return
-        print (args)
+        print(args)
         logreg_predict(args['data_csv'], args['weights_csv'], args['parse_method'])
     except Exception as error:
         print("Error:", error)
