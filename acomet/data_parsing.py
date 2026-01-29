@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def normalise_data(data):
+def normalise_data(data: np.ndarray) -> np.ndarray:
     '''proportional normalisation in poucentage (x/100)'''
     for i in range(data.shape[1]):
         max = np.max(data[:, i])
@@ -51,6 +51,45 @@ def get_students_scores(data_csv, treat_nan_values=replace_nan_value_by_0):
     X.drop(['Index', 'First Name', 'Last Name', 'Birthday', 'Best Hand'], axis=1, inplace=True)
     X = treat_nan_values(X)
     X.drop('Hogwarts House', axis=1, inplace=True)
+
+    # #test_suppr
+    # temp = X['Arithmancy']
+    # X['Arithmancy'] = X['Astronomy']
+    # X['Astronomy'] = temp
+    # X.rename(columns={'Arithmancy': 'Astronomy', 'Astronomy': 'Arithmancy'})
+    # print(X)
+
+    # X['Arithmancy'] = X['Transfiguration']
+    # X['Transfiguration'] = X['History of Magic']
+    # X['History of Magic'] = X['Care of Magical Creatures']
+    # X['Care of Magical Creatures'] = X['Potions']
+    # X['Potions'] = X['Defense Against the Dark Arts']
+    # X['Defense Against the Dark Arts'] = temp
+
+
+    X = X.to_numpy(dtype=np.float64)
+    normalise_data(X)
+    return X
+
+
+def get_students_scores_predict(data_csv, thetas, treat_nan_values=replace_nan_value_by_0):
+    ''' parameter 1 : name of the data.csv file
+        parameter 2 : (optional) name of the function used to treat nan values
+        Return X : the score of each feature per index '''
+
+    X = pd.read_csv(data_csv)
+    X.drop(['Index', 'First Name', 'Last Name', 'Birthday', 'Best Hand'], axis=1, inplace=True)
+
+    # check if features order is the same
+    thetas.set_index('Features', inplace=True)
+    thetas_labels = list(thetas.index.values)
+    X_columns = list(X.columns)
+    if (thetas_labels[1:] != X_columns[1:]):
+        X = X[['Hogwarts House', thetas_labels[1], thetas_labels[2], thetas_labels[3], thetas_labels[4], thetas_labels[5], thetas_labels[6], thetas_labels[7], thetas_labels[8], thetas_labels[9], thetas_labels[10], thetas_labels[11], thetas_labels[12], thetas_labels[13]]]
+
+
+    X = treat_nan_values(X)
+    X.drop('Hogwarts House', axis=1, inplace=True)
     X = X.to_numpy(dtype=np.float64)
     normalise_data(X)
     return X
@@ -62,6 +101,15 @@ def get_student_houses(data_csv, treat_nan_values=replace_nan_value_by_0):
         y = pandas_remove_nan_line(y)
     y = y['Hogwarts House']
     return y
+
+
+def get_feature_labels(data_csv):
+    feature_labels = pd.read_csv(data_csv)
+    feature_labels.drop(['Index', 'First Name', 'Last Name', 'Birthday', 'Best Hand', 'Hogwarts House'], axis=1, inplace=True)
+    feature_labels = list(feature_labels.columns.values)
+    feature_labels.insert(0, 'Bias')
+    return(feature_labels)
+
 
 
 def pandas_get_house_average(data):

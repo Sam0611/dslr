@@ -65,10 +65,11 @@ def logreg_train(data_csv, parsing_method=data_parsing.replace_nan_value_by_0, a
         binomial_results[binomial_results == hogwarts_house_dict[i]] = 1
         binomial_results = binomial_results.to_numpy(dtype=np.float64)
         thetas[hogwarts_house_dict[i]] = gradient_descent(X_b, binomial_results, alpha, iter)
-        cost_function(thetas[hogwarts_house_dict[i]], X_b, binomial_results)
         print_results(y, sigmoid(X_b @ thetas[hogwarts_house_dict[i]]), iter, cost_function(thetas[hogwarts_house_dict[i]], X_b, binomial_results), hogwarts_house_dict[i])
 
-    thetas.to_csv('weights.csv', index=False)
+    thetas.index = data_parsing.get_feature_labels(data_csv)
+    thetas.index.name = 'Features'
+    thetas.to_csv('weights.csv', index=True)
 
 
 def logreg_train_parse_args():

@@ -13,7 +13,8 @@ def predict_proba(X, theta):
 def logreg_predict(data_csv, weights_csv, parsing_method=data_parsing.replace_nan_value_by_0):
 
     thetas = pd.read_csv(weights_csv)
-    my_data = data_parsing.get_students_scores(data_csv, parsing_method)
+    my_data = data_parsing.get_students_scores_predict(data_csv, thetas, parsing_method)
+    # my_data = data_parsing.get_students_scores(data_csv, parsing_method)
     results = data_parsing.get_student_houses(data_csv)
 
     hogwarts_house_dict = ["Gryffindor", "Slytherin", "Hufflepuff", "Ravenclaw"]
