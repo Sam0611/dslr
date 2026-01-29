@@ -78,8 +78,6 @@ def logreg_train(data):
 
         print_results(data, p, count, loss, houses[i])
 
-        print('\033[00;1m------------------------------------\033[00m')
-
         # write weight values in file
         f.write(f"{houses[i]}\n")
         for w in weights:
@@ -102,6 +100,8 @@ def print_results(data, p, count, loss, house):
     print('Number of false positive :', fp)
     print('Number of false negative :', fn)
     print('Total of false predictions :', fp + fn)
+
+    print('\033[00;1m------------------------------------\033[00m')
 
 
 def gradient_descent(num_data, weights, p, y):

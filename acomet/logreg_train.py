@@ -4,6 +4,29 @@ import sys
 import data_parsing
 
 
+def print_results(data, p, count, loss, house):
+    """Displays number of iterations and errors"""
+    fp = 0
+    fn = 0
+    for i in range(len(p)):
+        if p[i] > 0.5 and data[i] != house:
+            fp = fp + 1
+        if p[i] < 0.5 and data[i] == house:
+            fn = fn + 1
+
+    # set colors for each house [91: red, 92: green, 93: yellow, 96: blue]
+    colors = {"Gryffindor": 91, "Slytherin": 92, "Hufflepuff": 93, "Ravenclaw": 96}
+
+    print(f"\033[{colors[house]};1m{house}")
+    print('Number of iterations :', count)
+    print('Loss value :', loss)
+    print('Number of false positive :', fp)
+    print('Number of false negative :', fn)
+    print('Total of false predictions :', fp + fn)
+
+    print('\033[00;1m------------------------------------\033[00m')
+
+
 def cost_function(theta, X, y):
     predictions = sigmoid(X @ theta)
     cost = (np.log(predictions) * y) + (np.log(1 - predictions) * (1 - y))
@@ -18,32 +41,19 @@ def calculate_gradient(theta, X, y):
     return (X.T @ (sigmoid(X @ theta) - y) / y.size)  # derivative
 
 
-def gradient_descent(X, y, alpha=0.001, iter=1000):
-    X_b = np.c_[np.ones(X.shape[0]), X]    # intercept (or bias)
+def gradient_descent(X_b, y, alpha=0.001, iter=1000):
     theta = np.zeros(X_b.shape[1])
-
-    # save optimal values
-    cost_save = np.finfo(np.float64).max
-    loop_save = 0
-    theta_save = theta.copy()
 
     for i in range(iter):
         grad = calculate_gradient(theta, X_b, y)
         theta -= alpha * grad
 
-        # save optimal values
-        cost = cost_function(theta, X_b, y)
-        if (cost < cost_save):
-            cost_save = cost
-            loop_save = i
-            theta_save = theta.copy()
-
-    print(f"Best solution find at loop {loop_save} with a cost of {cost_save}")
-    return theta_save
+    return theta
 
 
 def logreg_train(data_csv, parsing_method=data_parsing.replace_nan_value_by_0, alpha=0.01, iter=1000):
     X = data_parsing.get_students_scores(data_csv, parsing_method)
+    X_b = np.c_[np.ones(X.shape[0]), X]    # intercept (or bias)
     y = data_parsing.get_student_houses(data_csv, parsing_method)
 
     hogwarts_house_dict = {0: "Gryffindor", 1: "Slytherin", 2: "Hufflepuff", 3: "Ravenclaw"}
@@ -54,7 +64,9 @@ def logreg_train(data_csv, parsing_method=data_parsing.replace_nan_value_by_0, a
         binomial_results[binomial_results != hogwarts_house_dict[i]] = 0
         binomial_results[binomial_results == hogwarts_house_dict[i]] = 1
         binomial_results = binomial_results.to_numpy(dtype=np.float64)
-        thetas[hogwarts_house_dict[i]] = gradient_descent(X, binomial_results, alpha, iter)
+        thetas[hogwarts_house_dict[i]] = gradient_descent(X_b, binomial_results, alpha, iter)
+        cost_function(thetas[hogwarts_house_dict[i]], X_b, binomial_results)
+        print_results(y, sigmoid(X_b @ thetas[hogwarts_house_dict[i]]), iter, cost_function(thetas[hogwarts_house_dict[i]], X_b, binomial_results), hogwarts_house_dict[i])
 
     thetas.to_csv('weights.csv', index=False)
 

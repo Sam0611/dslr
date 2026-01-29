@@ -47,7 +47,6 @@ def logreg_predict_parse_args():
 
     i = 1
     while (i < len(sys.argv)):
-        print(f"loop {i}")
         args_dic[list(args_dic.keys())[i - 1]] = sys.argv[i]
         i += 1
 
@@ -69,7 +68,6 @@ def main():
         args = logreg_predict_parse_args()
         if (not args):
             return
-        print(args)
         logreg_predict(args['data_csv'], args['weights_csv'], args['parse_method'])
     except Exception as error:
         print("Error:", error)

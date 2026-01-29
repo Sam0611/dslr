@@ -3,11 +3,14 @@ import numpy as np
 
 
 def normalise_data(data):
-    '''normalize data with Z-Score method'''
+    '''proportional normalisation in poucentage (x/100)'''
     for i in range(data.shape[1]):
-        data[:, i] = data[:, i] - data[:, i].mean()
-        data[:, i] = data[:, i] / data[:, i].std()
-    return data
+        max = np.max(data[:, i])
+        min = np.min(data[:, i])
+        spread = abs(max - min)
+        data[:, i] -= min
+        data[:, i] = data[:, i] * 100 / spread
+    return (data)
 
 
 def hogwarts_house_to_value(data, hogwarts_house_dict):

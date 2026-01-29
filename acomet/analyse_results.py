@@ -12,7 +12,7 @@ def analyse_results(data, predictions, col):
     errors = accuracy[accuracy == False].size
 
     print(f"Number of errors : {errors}")
-    print(f"Accuracy : {(accuracy.size - errors) / accuracy.size * 100}%")
+    print(f"Accuracy : {(accuracy.size - errors) * 100 / accuracy.size}%")
     print("sklearn accuracy score :", end=' ')
     print(accuracy_score(data[col], predictions[col]))
 
