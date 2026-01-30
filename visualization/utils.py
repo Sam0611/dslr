@@ -45,10 +45,6 @@ def init_subplots(n_plots, nrows, ncols):
     for i in range(nrows * ncols - n_plots):
         axes[nrows - 1, ncols - 1 - i].set_visible(False)
 
-    # display fullscreen
-    manager = plt.get_current_fig_manager()
-    manager.full_screen_toggle()
-
     # link escape key to close the window
     fig.canvas.mpl_connect('key_press_event', press)
 
