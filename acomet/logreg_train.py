@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import sys
 import data_parsing
+import Loading
 
 
 def print_results(data, p, count, loss, house):
@@ -48,7 +49,7 @@ def calculate_gradient(theta, X, y):
 def gradient_descent(X_b, y, alpha=0.001, iter=1000):
     theta = np.zeros(X_b.shape[1])
 
-    for i in range(iter):
+    for i in Loading.ft_tqdm(range(iter)):
         grad = calculate_gradient(theta, X_b, y)
         theta -= alpha * grad
 
@@ -61,7 +62,7 @@ def mini_batch_gradient_descent(X_b, y, alpha=0.001, iter=1000, batch_size=10):
     theta = np.zeros(X_b.shape[1])
     rng = np.random.default_rng()
 
-    for i in range(iter):
+    for i in Loading.ft_tqdm(range(iter)):
         batch_X_b = rng.choice(X_b.shape[0], size=batch_size, replace=False)
         grad = calculate_gradient(theta, X_b[batch_X_b], y[batch_X_b])
         theta -= alpha * grad
@@ -73,7 +74,7 @@ def stochastic_gradient_descent(X_b, y, alpha=0.001, iter=1000):
     theta = np.zeros(X_b.shape[1])
     rng = np.random.default_rng()
 
-    for i in range(iter):
+    for i in Loading.ft_tqdm(range(iter)):
         batch_X_b = rng.choice(X_b.shape[0], size=1, replace=False)
         grad = calculate_gradient(theta, X_b[batch_X_b], y[batch_X_b])
         theta -= alpha * grad
