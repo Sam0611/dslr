@@ -51,22 +51,6 @@ def get_students_scores(data_csv, treat_nan_values=replace_nan_value_by_0):
     X.drop(['Index', 'First Name', 'Last Name', 'Birthday', 'Best Hand'], axis=1, inplace=True)
     X = treat_nan_values(X)
     X.drop('Hogwarts House', axis=1, inplace=True)
-
-    # #test_suppr
-    # temp = X['Arithmancy']
-    # X['Arithmancy'] = X['Astronomy']
-    # X['Astronomy'] = temp
-    # X.rename(columns={'Arithmancy': 'Astronomy', 'Astronomy': 'Arithmancy'})
-    # print(X)
-
-    # X['Arithmancy'] = X['Transfiguration']
-    # X['Transfiguration'] = X['History of Magic']
-    # X['History of Magic'] = X['Care of Magical Creatures']
-    # X['Care of Magical Creatures'] = X['Potions']
-    # X['Potions'] = X['Defense Against the Dark Arts']
-    # X['Defense Against the Dark Arts'] = temp
-
-
     X = X.to_numpy(dtype=np.float64)
     normalise_data(X)
     return X
