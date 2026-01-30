@@ -45,6 +45,7 @@ def calculate_gradient(theta, X, y):
 
 
 def gradient_descent(X_b, y, alpha=0.001, iter=1000):
+    print('Method used : gradient descent')
     theta = np.zeros(X_b.shape[1])
 
     for i in range(iter):
@@ -55,6 +56,7 @@ def gradient_descent(X_b, y, alpha=0.001, iter=1000):
 
 
 def mini_batch_gradient_descent(X_b, y, alpha=0.001, iter=1000, batch_size=10):
+    print('Method used : mini batch gradient descent')
     if (batch_size > len(X_b)):
         batch_size = len(X_b)
     theta = np.zeros(X_b.shape[1])
@@ -62,6 +64,19 @@ def mini_batch_gradient_descent(X_b, y, alpha=0.001, iter=1000, batch_size=10):
 
     for i in range(iter):
         batch_X_b = rng.choice(X_b.shape[0], size=batch_size, replace=False)
+        grad = calculate_gradient(theta, X_b[batch_X_b], y[batch_X_b])
+        theta -= alpha * grad
+
+    return theta
+
+
+def stochastic_gradient_descent(X_b, y, alpha=0.001, iter=1000):
+    print('Method used : stochastic gradient descent')
+    theta = np.zeros(X_b.shape[1])
+    rng = np.random.default_rng()
+
+    for i in range(iter):
+        batch_X_b = rng.choice(X_b.shape[0], size=1, replace=False)
         grad = calculate_gradient(theta, X_b[batch_X_b], y[batch_X_b])
         theta -= alpha * grad
 
@@ -81,7 +96,9 @@ def logreg_train(data_csv, parsing_method=data_parsing.replace_nan_value_by_0, a
         binomial_results[binomial_results != hogwarts_house_dict[i]] = 0
         binomial_results[binomial_results == hogwarts_house_dict[i]] = 1
         binomial_results = binomial_results.to_numpy(dtype=np.float64)
-        if (batch_size > 0):
+        if (batch_size == 1):
+            thetas[hogwarts_house_dict[i]] = stochastic_gradient_descent(X_b, binomial_results, alpha, iter)
+        elif (batch_size > 0):
             thetas[hogwarts_house_dict[i]] = mini_batch_gradient_descent(X_b, binomial_results, alpha, iter, batch_size)
         else:
             thetas[hogwarts_house_dict[i]] = gradient_descent(X_b, binomial_results, alpha, iter)
