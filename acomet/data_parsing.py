@@ -14,6 +14,15 @@ def normalise_data(data: np.ndarray) -> np.ndarray:
     return (data)
 
 
+def get_relevant_columns(data, houses=True):
+    num_data = data.select_dtypes(include=['number'])
+    if "Index" in num_data.columns:
+        num_data = num_data.drop("Index", axis='columns')
+    if not "Hogwarts House" in num_data.columns and houses:
+        num_data.insert(0, 'Hogwarts House', data['Hogwarts House'])
+    return num_data
+
+
 def hogwarts_house_to_value(data, hogwarts_house_dict):
     my_result = data['Hogwarts House'].map(hogwarts_house_dict)
     return (my_result)
@@ -48,8 +57,8 @@ def get_students_scores(data_csv, treat_nan_values: Callable = replace_nan_value
         parameter 2 : (optional) name of the function used to treat nan values
         Return X : the score of each feature per index '''
 
-    X = pd.read_csv(data_csv)
-    X.drop(['Index', 'First Name', 'Last Name', 'Birthday', 'Best Hand'], axis=1, inplace=True)
+    data = pd.read_csv(data_csv)
+    X = get_relevant_columns(data)
     X = treat_nan_values(X)
     X.drop('Hogwarts House', axis=1, inplace=True)
     X = X.to_numpy(dtype=np.float64)
@@ -62,8 +71,8 @@ def get_students_scores_predict(data_csv, thetas, treat_nan_values: Callable = r
         parameter 2 : (optional) name of the function used to treat nan values
         Return X : the score of each feature per index '''
 
-    X = pd.read_csv(data_csv)
-    X.drop(['Index', 'First Name', 'Last Name', 'Birthday', 'Best Hand'], axis=1, inplace=True)
+    data = pd.read_csv(data_csv)
+    X = get_relevant_columns(data)
 
     # check if features order is the same
     thetas.set_index('Features', inplace=True)
@@ -90,7 +99,7 @@ def get_student_houses(data_csv, treat_nan_values: Callable = replace_nan_value_
 
 def get_feature_labels(data_csv):
     feature_labels = pd.read_csv(data_csv)
-    feature_labels.drop(['Index', 'First Name', 'Last Name', 'Birthday', 'Best Hand', 'Hogwarts House'], axis=1, inplace=True)
+    feature_labels = get_relevant_columns(feature_labels, False)
     feature_labels = list(feature_labels.columns.values)
     feature_labels.insert(0, 'Bias')
     return(feature_labels)
