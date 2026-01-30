@@ -5,9 +5,6 @@ import pandas as pd
 
 from utils import get_numerical_data, init_subplots
 
-# sys.path.append("../")
-# from analysis import statistics
-
 
 def histogram(data):
     """Display numerical data as histogram"""
@@ -49,14 +46,6 @@ def histogram(data):
             c = c + 1
 
         col = col + 1
-
-    # add histogram of variance
-    # std = []
-    # for name in num_data.columns:
-    #     col = get_not_empty_values(num_data[name])
-    #     std.append(statistics.get_standard_deviation(col))
-    # print(std)
-    # plt.hist(std)
 
     plt.tight_layout()
     plt.show()
