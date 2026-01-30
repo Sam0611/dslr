@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from typing import Callable
 
 
 def normalise_data(data: np.ndarray) -> np.ndarray:
@@ -42,7 +43,7 @@ def replace_nan_value(data):
     return data
 
 
-def get_students_scores(data_csv, treat_nan_values=replace_nan_value_by_0):
+def get_students_scores(data_csv, treat_nan_values: Callable = replace_nan_value_by_0):
     ''' parameter 1 : name of the data.csv file
         parameter 2 : (optional) name of the function used to treat nan values
         Return X : the score of each feature per index '''
@@ -56,7 +57,7 @@ def get_students_scores(data_csv, treat_nan_values=replace_nan_value_by_0):
     return X
 
 
-def get_students_scores_predict(data_csv, thetas, treat_nan_values=replace_nan_value_by_0):
+def get_students_scores_predict(data_csv, thetas, treat_nan_values: Callable = replace_nan_value_by_0):
     ''' parameter 1 : name of the data.csv file
         parameter 2 : (optional) name of the function used to treat nan values
         Return X : the score of each feature per index '''
@@ -79,7 +80,7 @@ def get_students_scores_predict(data_csv, thetas, treat_nan_values=replace_nan_v
     return X
 
 
-def get_student_houses(data_csv, treat_nan_values=replace_nan_value_by_0):
+def get_student_houses(data_csv, treat_nan_values: Callable = replace_nan_value_by_0):
     y = pd.read_csv(data_csv)
     if (treat_nan_values == pandas_remove_nan_line):
         y = pandas_remove_nan_line(y)
