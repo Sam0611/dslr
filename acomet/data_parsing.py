@@ -10,7 +10,7 @@ def normalise_data(data: np.ndarray) -> np.ndarray:
         min = np.min(data[:, i])
         spread = abs(max - min)
         data[:, i] -= min
-        data[:, i] = data[:, i] * 1 / spread
+        data[:, i] = data[:, i] * 100 / spread
     return (data)
 
 
