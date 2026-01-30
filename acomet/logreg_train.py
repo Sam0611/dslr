@@ -29,14 +29,15 @@ def print_results(data, p, count, loss, house):
 
 def cost_function(theta, X, y):
     predictions = sigmoid(X @ theta)
-    # protect from log(0) = -inf that cause warning
-    eps = 1e-15
-    predictions = np.clip(predictions, eps, 1 - eps)
+    limit_overflow = 1e-15
+    predictions = np.clip(predictions, limit_overflow, 1 - limit_overflow)
     cost = (np.log(predictions) * y) + (np.log(1 - predictions) * (1 - y))
     return (-sum(cost) / y.size)
 
 
 def sigmoid(z):
+    limit_overflow = 709
+    z[z < -limit_overflow] = -limit_overflow
     return (1.0 / (1.0 + np.exp(-z)))
 
 

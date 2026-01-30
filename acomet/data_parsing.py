@@ -3,13 +3,13 @@ import numpy as np
 
 
 def normalise_data(data: np.ndarray) -> np.ndarray:
-    '''proportional normalisation in poucentage (x/100)'''
+    '''proportional normalisation in poucentage (x/1)'''
     for i in range(data.shape[1]):
         max = np.max(data[:, i])
         min = np.min(data[:, i])
         spread = abs(max - min)
         data[:, i] -= min
-        data[:, i] = data[:, i] * 100 / spread
+        data[:, i] = data[:, i] * 1 / spread
     return (data)
 
 
